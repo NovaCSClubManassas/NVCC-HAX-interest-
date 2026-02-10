@@ -16,9 +16,9 @@ const COLORS = {
 const INITIAL_FAQS = [
   {
     id: '1',
-    question: 'What is NVCC HAX?',
+    question: 'What is reNOVAte hacks?',
     answer:
-      "NVCC HAX is Northern Virginia Community College's premier hackathon and CS club event, bringing together students, innovators, and creators for 24 hours of building, learning, and networking.",
+      "reNOVAte hacks is Northern Virginia Community College's premier hackathon and CS club event, bringing together students, innovators, and creators for 24 hours of building, learning, and networking.",
     order: 1,
     published: true,
   },
@@ -26,7 +26,7 @@ const INITIAL_FAQS = [
     id: '2',
     question: 'Who can participate?',
     answer:
-      "All students are welcome! Whether you're a seasoned coder or have never written a line of code, HAX is designed for all skill levels.",
+      "All students are welcome! Whether you're a seasoned coder or have never written a line of code, reNOVAte hacks is designed for all skill levels, yes even with no coiding experience.",
     order: 2,
     published: true,
   },
@@ -34,7 +34,7 @@ const INITIAL_FAQS = [
     id: '3',
     question: 'Is there a registration fee?',
     answer:
-      'Nope! NVCC HAX is completely free for all participants. We provide food, swag, mentorship, and prizes.',
+      'Nope! reNOVAte hacks is completely free for all participants. We provide food, swag, mentorship, and prizes.',
     order: 3,
     published: true,
   },
@@ -150,7 +150,7 @@ const App = () => {
               letterSpacing: '2px',
             }}
           >
-            NVCC HAX
+            reNOVAte hacks
           </div>
         </nav>
 
@@ -229,7 +229,7 @@ const HomePage = ({ faqs }) => {
             animationDelay: '0.1s',
           }}
         >
-          NOVA HAX
+          reNOVAte hacks
         </h1>
 
         <p
@@ -322,10 +322,8 @@ const HomePage = ({ faqs }) => {
             Become a Judge!!
             <Users size={20} />
           </a>
-
-          {/* Replace the href below with your Google Form URL when ready */}
           <a
-            href="https://docs.google.com/forms/d/e/YOUR_SPONSOR_FORM_ID/viewform?usp=sf_link"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSf62TrVyY-8sINGdBUCish25_y08o-EPTk3zcWG7sMHeo1HZA/viewform?usp=publish-editor"
             target="_blank"
             rel="noopener noreferrer"
             className="hover-lift"
@@ -509,7 +507,7 @@ const HomePage = ({ faqs }) => {
           marginTop: '4rem',
         }}
       >
-        <p style={{ color: '#ffffff99', marginBottom: '1rem' }}>© 2026 NVCC HAX - Northern Virginia Community College Manassas</p>
+        <p style={{ color: '#ffffff99', marginBottom: '1rem' }}>© 2026 reNOVAte hacks - Northern Virginia Community College Manassas</p>
         <p style={{ color: '#ffffff66', fontSize: '0.875rem' }}>Northern Virgina Comunity College Comp Sci Club (Mannasas)</p>
       </footer>
     </>
