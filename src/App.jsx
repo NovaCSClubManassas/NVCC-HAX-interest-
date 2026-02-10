@@ -49,9 +49,6 @@ const INITIAL_FAQS = [
 ];
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   // Scroll animations
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -67,7 +64,7 @@ const App = () => {
 
     document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [currentPage]);
+  }, []);
 
   return (
     <div
@@ -155,44 +152,10 @@ const App = () => {
           >
             NVCC HAX
           </div>
-
-          <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-            <button
-              onClick={() => setCurrentPage('home')}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: currentPage === 'home' ? COLORS.gold : '#fff',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                fontWeight: currentPage === 'home' ? 'bold' : 'normal',
-                transition: 'all 0.3s',
-                fontFamily: 'inherit',
-              }}
-            >
-              Home
-            </button>
-            <button
-              onClick={() => setCurrentPage('sponsor')}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: currentPage === 'sponsor' ? COLORS.gold : '#fff',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                fontWeight: currentPage === 'sponsor' ? 'bold' : 'normal',
-                transition: 'all 0.3s',
-                fontFamily: 'inherit',
-              }}
-            >
-              Sponsor
-            </button>
-          </div>
         </nav>
 
         {/* Page Content */}
-        {currentPage === 'home' && <HomePage faqs={INITIAL_FAQS} />}
-        {currentPage === 'sponsor' && <SponsorPage />}
+        <HomePage faqs={INITIAL_FAQS} />
       </div>
 
       <style>{`
@@ -358,6 +321,33 @@ const HomePage = ({ faqs }) => {
           >
             Become a Judge!!
             <Users size={20} />
+          </a>
+
+          {/* Replace the href below with your Google Form URL when ready */}
+          <a
+            href="https://docs.google.com/forms/d/e/YOUR_SPONSOR_FORM_ID/viewform?usp=sf_link"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover-lift"
+            style={{
+              padding: '1.25rem 2.5rem',
+              background: 'transparent',
+              border: `2px solid ${COLORS.gold}`,
+              borderRadius: '8px',
+              color: COLORS.gold,
+              fontSize: '1.125rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.3s',
+              fontFamily: 'inherit',
+            }}
+          >
+            Sponsor
+            <ExternalLink size={20} />
           </a>
         </div>
 
@@ -580,272 +570,6 @@ const FaqItem = ({ faq, idx, openFaq, setOpenFaq }) => {
           <p>{faq.answer}</p>
         </div>
       </div>
-    </div>
-  );
-};
-
-const SponsorPage = () => {
-  const [formData, setFormData] = useState({
-    company: '',
-    contactName: '',
-    email: '',
-    phone: '',
-    message: '',
-    level: 'bronze',
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // In production, this would call your API endpoint
-    console.log('Sponsor form submitted:', formData);
-    alert(
-      "Thank you for your interest! We'll be in touch soon.\n\n(In production, this would send an email and save to your database)"
-    );
-    setFormData({
-      company: '',
-      contactName: '',
-      email: '',
-      phone: '',
-      message: '',
-      level: 'bronze',
-    });
-  };
-
-  return (
-    <div style={{ minHeight: '80vh' }}>
-      {/* Hero */}
-      <section
-        style={{
-          padding: '4rem 2rem',
-          textAlign: 'center',
-          maxWidth: '900px',
-          margin: '0 auto',
-        }}
-      >
-        <h1
-          className="fade-up"
-          style={{
-            fontSize: 'clamp(2.5rem, 6vw, 4rem)',
-            marginBottom: '1.5rem',
-            fontFamily: '"Orbitron", sans-serif',
-            background: `linear-gradient(135deg, ${COLORS.lightGold}, ${COLORS.gold})`,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          Sponsor NVCC HAX
-        </h1>
-
-        <p
-          className="fade-up"
-          style={{
-            fontSize: '1.25rem',
-            color: '#ffffffcc',
-            marginBottom: '3rem',
-            lineHeight: '1.6',
-            animationDelay: '0.1s',
-          }}
-        >
-          Join us in empowering the next generation of innovators. Your support helps provide resources, mentorship, and opportunities for NVCC students to explore technology and bring their ideas to life.
-        </p>
-      </section>
-      {/* Contact Form */}
-      <section
-        style={{
-          padding: '2rem',
-          maxWidth: '700px',
-          margin: '0 auto 4rem',
-        }}
-      >
-        <div
-          className="fade-up"
-          style={{
-            background: `linear-gradient(135deg, ${COLORS.dark}cc, ${COLORS.darkGreen}cc)`,
-            border: `1px solid ${COLORS.green}60`,
-            borderRadius: '12px',
-            padding: '3rem',
-            backdropFilter: 'blur(10px)',
-          }}
-        >
-          <h2
-            style={{
-              fontSize: '2rem',
-              marginBottom: '2rem',
-              color: COLORS.lightGold,
-              fontFamily: '"Orbitron", sans-serif',
-            }}
-          >
-            Get in Touch
-          </h2>
-
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label
-                style={{
-                  display: 'block',
-                  marginBottom: '0.5rem',
-                  color: COLORS.gold,
-                  fontWeight: 'bold',
-                }}
-              >
-                Company Name *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.company}
-                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  background: COLORS.darker,
-                  border: `1px solid ${COLORS.green}`,
-                  borderRadius: '6px',
-                  color: '#fff',
-                  fontSize: '1rem',
-                  fontFamily: 'inherit',
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label
-                style={{
-                  display: 'block',
-                  marginBottom: '0.5rem',
-                  color: COLORS.gold,
-                  fontWeight: 'bold',
-                }}
-              >
-                Contact Person *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.contactName}
-                onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  background: COLORS.darker,
-                  border: `1px solid ${COLORS.green}`,
-                  borderRadius: '6px',
-                  color: '#fff',
-                  fontSize: '1rem',
-                  fontFamily: 'inherit',
-                }}
-              />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    color: COLORS.gold,
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    background: COLORS.darker,
-                    border: `1px solid ${COLORS.green}`,
-                    borderRadius: '6px',
-                    color: '#fff',
-                    fontSize: '1rem',
-                    fontFamily: 'inherit',
-                  }}
-                />
-              </div>
-
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    color: COLORS.gold,
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    background: COLORS.darker,
-                    border: `1px solid ${COLORS.green}`,
-                    borderRadius: '6px',
-                    color: '#fff',
-                    fontSize: '1rem',
-                    fontFamily: 'inherit',
-                  }}
-                />
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '2rem' }}>
-              <label
-                style={{
-                  display: 'block',
-                  marginBottom: '0.5rem',
-                  color: COLORS.gold,
-                  fontWeight: 'bold',
-                }}
-              >
-                Message
-              </label>
-              <textarea
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  background: COLORS.darker,
-                  border: `1px solid ${COLORS.green}`,
-                  borderRadius: '6px',
-                  color: '#fff',
-                  fontSize: '1rem',
-                  fontFamily: 'inherit',
-                  resize: 'vertical',
-                }}
-              />
-            </div>
-
-            <button
-              type="submit"
-              style={{
-                width: '100%',
-                padding: '1rem',
-                background: `linear-gradient(135deg, ${COLORS.gold}, ${COLORS.lightGold})`,
-                border: 'none',
-                borderRadius: '8px',
-                color: COLORS.darker,
-                fontSize: '1.125rem',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                transition: 'transform 0.3s',
-              }}
-            >
-              Send Message
-            </button>
-          </form>
-        </div>
-      </section>
     </div>
   );
 };
