@@ -26,7 +26,7 @@ const INITIAL_FAQS = [
     id: '2',
     question: 'Who can participate?',
     answer:
-      "All students are welcome! Whether you're a seasoned coder or have never written a line of code, reNOVAte hacks is designed for all skill levels, yes even with no coiding experience.",
+      "All students are welcome! Whether you're a seasoned coder or have never written a line of code, reNOVAte hacks is designed for all skill levels, yes even with no coding experience.",
     order: 2,
     published: true,
   },
