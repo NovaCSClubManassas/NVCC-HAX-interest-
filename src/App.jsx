@@ -191,6 +191,19 @@ const App = () => {
           transform: translateY(-5px);
           box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
         }
+
+        @media (max-width: 640px) {
+          .social-links {
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+          }
+
+          .social-links a {
+            width: 100%;
+            justify-content: center;
+          }
+        }
       `}</style>
     </div>
   );
@@ -351,7 +364,7 @@ const HomePage = ({ faqs }) => {
 
         {/* Social Links */}
         <div
-          className="fade-up"
+          className="fade-up social-links"
           style={{
             display: 'flex',
             gap: '1.5rem',
