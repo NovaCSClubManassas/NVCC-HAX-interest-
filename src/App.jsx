@@ -18,7 +18,7 @@ const INITIAL_FAQS = [
     id: '1',
     question: 'What is reNOVAte hacks?',
     answer:
-      "reNOVAte hacks is Northern Virginia Community College's premier hackathon and CS club event, bringing together students, innovators, and creators for 24 hours of building, learning, and networking.",
+      "reNOVAte hacks is Northern Virginia Community College's premier hackathon and CS club event, bringing together students, innovators, and creators for 10 hours of building, learning, and networking.",
     order: 1,
     published: true,
   },
