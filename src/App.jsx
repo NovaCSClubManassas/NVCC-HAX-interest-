@@ -270,7 +270,7 @@ const HomePage = ({ faqs }) => {
             animationDelay: '0.3s',
           }}
         >
-          Join the Nighthawks on April 18-19 for 24 hours of coding, building, and innovation at NVCC Manassas campus. Connect with fellow hackers, learn from mentors, and bring your wildest tech ideas to life.
+          Join the Nighthawks on April 18th for 10 hours of coding, building, and innovation at NVCC Manassas campus. Connect with fellow hackers, learn from mentors, and bring your wildest tech ideas to life.
         </p>
 
         {/* CTA Buttons */}
@@ -469,7 +469,7 @@ const HomePage = ({ faqs }) => {
           }}
         >
           {[
-            { icon: <Calendar size={40} />, title: 'When?', text: 'April 18-19\n24 hours of hacking' },
+            { icon: <Calendar size={40} />, title: 'When?', text: 'April 18\n10 hours of hacking' },
             { icon: <MapPin size={40} />, title: 'Where?', text: 'NVCC Manassas Campus' },
             { icon: <Users size={40} />, title: 'Who?', text: 'All students\nAll skill levels welcome' },
           ].map((card, idx) => (
