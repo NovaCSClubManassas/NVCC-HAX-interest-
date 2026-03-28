@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Users, Calendar, MapPin, ExternalLink } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 
 // NVCC Nighthawks branding from the image
 const COLORS = {
@@ -205,6 +206,7 @@ const App = () => {
           }
         }
       `}</style>
+      <Analytics />
     </div>
   );
 };
