@@ -306,7 +306,7 @@ const HomePage = ({ faqs }) => {
               fontFamily: 'inherit',
             }}
           >
-            Registor!!
+            Register!!
             <ExternalLink size={20} />
           </a>
 
