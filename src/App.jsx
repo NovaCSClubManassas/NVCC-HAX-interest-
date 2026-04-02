@@ -286,7 +286,7 @@ const HomePage = ({ faqs }) => {
           }}
         >
           <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSedoYRmhgJjLZ-hCz2pv08rVDFTbjJWmIdIbXgQ-GrafqCXew/viewform?usp=publish-editor"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSecG3E17tstmPmlDcuvlDYXIXiX9AcnPLumBTgDudaOWLIahw/viewform?usp=header"
             target="_blank"
             rel="noopener noreferrer"
             className="hover-lift"
@@ -306,7 +306,7 @@ const HomePage = ({ faqs }) => {
               fontFamily: 'inherit',
             }}
           >
-            I'm Interested
+            Registor!!
             <ExternalLink size={20} />
           </a>
 
