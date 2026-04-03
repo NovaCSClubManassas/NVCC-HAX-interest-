@@ -16,9 +16,9 @@ const COLORS = {
 const INITIAL_FAQS = [
   {
     id: '1',
-    question: 'What is reNOVAte hacks?',
+    question: 'What is the reNOVAte Create-a-thon?',
     answer:
-      "reNOVAte hacks is Northern Virginia Community College's premier hackathon and CS club event, bringing together students, innovators, and creators for 10 hours of building, learning, and networking.",
+      "The reNOVAte Create-a-thon is Northern Virginia Community College's premier Create-a-thon and CS club event, bringing together students, innovators, and creators for 10 hours of building, learning, and networking.",
     order: 1,
     published: true,
   },
@@ -26,7 +26,7 @@ const INITIAL_FAQS = [
     id: '2',
     question: 'Who can participate?',
     answer:
-      "All students are welcome! Whether you're a seasoned coder or have never written a line of code, reNOVAte hacks is designed for all skill levels, yes even with no coding experience.",
+      "All students are welcome! Whether you're a seasoned coder or have never written a line of code, reNOVAte Create-a-thon is designed for all skill levels, yes even with no coding experience.",
     order: 2,
     published: true,
   },
@@ -34,7 +34,7 @@ const INITIAL_FAQS = [
     id: '3',
     question: 'Is there a registration fee?',
     answer:
-      'Nope! reNOVAte hacks is completely free for all participants. We provide food, swag, mentorship, and prizes.',
+      'Nope! reNOVAte Create-a-thon is completely free for all participants. We provide food, swag, mentorship, and prizes.',
     order: 3,
     published: true,
   },
@@ -150,7 +150,7 @@ const App = () => {
               letterSpacing: '2px',
             }}
           >
-            reNOVAte hacks
+            reNOVAte Create-a-thon
           </div>
         </nav>
 
@@ -242,7 +242,7 @@ const HomePage = ({ faqs }) => {
             animationDelay: '0.1s',
           }}
         >
-          reNOVAte hacks
+          reNOVAte Create-a-thon
         </h1>
 
         <p
@@ -270,7 +270,7 @@ const HomePage = ({ faqs }) => {
             animationDelay: '0.3s',
           }}
         >
-          Join the Nighthawks on April 18th for 10 hours of coding, building, and innovation at NVCC Manassas campus. Connect with fellow hackers, learn from mentors, and bring your wildest tech ideas to life.
+          Join the Nighthawks on April 18th for 10 hours of coding, building, and innovation at NVCC Manassas campus. Connect with fellow builders, learn from mentors, and bring your wildest tech ideas to life.
         </p>
 
         {/* CTA Buttons */}
@@ -469,7 +469,7 @@ const HomePage = ({ faqs }) => {
           }}
         >
           {[
-            { icon: <Calendar size={40} />, title: 'When?', text: 'April 18\n10 hours of hacking' },
+            { icon: <Calendar size={40} />, title: 'When?', text: 'April 18\n10 hours of building' },
             { icon: <MapPin size={40} />, title: 'Where?', text: 'NVCC Manassas Campus' },
             { icon: <Users size={40} />, title: 'Who?', text: 'All students\nAll skill levels welcome' },
           ].map((card, idx) => (
@@ -543,7 +543,7 @@ const HomePage = ({ faqs }) => {
           marginTop: '4rem',
         }}
       >
-        <p style={{ color: '#ffffff99', marginBottom: '1rem' }}>© 2026 reNOVAte hacks - Northern Virginia Community College Manassas</p>
+        <p style={{ color: '#ffffff99', marginBottom: '1rem' }}>© 2026 reNOVAte Create-a-thon - Northern Virginia Community College Manassas</p>
         <p style={{ color: '#ffffff66', fontSize: '0.875rem' }}>Northern Virgina Comunity College Comp Sci Club (Mannasas)</p>
       </footer>
     </>
