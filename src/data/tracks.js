@@ -1,31 +1,31 @@
-/** Edit track copy here — used by ThemeCardGrid */
+/** Edit track copy here — used by ThemeCardGrid (iconKey maps in ThemeCardGrid.jsx) */
 export const TRACKS = [
   {
     id: 'software',
-    iconKey: 'cpu',
+    iconKey: 'laptop',
     title: 'Software',
     tagline: 'Code that ships',
     text: 'Apps, tools, and experiences — bring your laptop and curiosity.',
   },
   {
     id: 'hardware',
-    iconKey: 'mapPin',
+    iconKey: 'hardware',
     title: 'Hardware',
     tagline: 'Bits meet atoms',
-    text: 'Circuits, sensors, and physical prototypes — workshop support for getting started.',
+    text: 'Circuits, sensors, and physical prototypes — wrenches welcome, mentors on deck.',
   },
   {
     id: 'scratch',
-    iconKey: 'leaf',
+    iconKey: 'scratchBlocks',
     title: 'Scratch',
     tagline: 'Start here',
-    text: 'Beginner-friendly block coding — no prior experience required.',
+    text: 'Beginner-friendly block coding — snap pieces together, no prior experience required.',
   },
   {
-    id: 'side',
-    iconKey: 'users',
-    title: 'Side tracks',
-    tagline: 'Room to explore',
-    text: 'Creative experiments and collaboration — details at kickoff.',
+    id: 'best-overall',
+    iconKey: 'medal',
+    title: 'Best Overall',
+    tagline: 'Cross-track excellence',
+    text: 'Judges pick the strongest project across tracks — polish your demo and story.',
   },
 ];
