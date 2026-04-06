@@ -1,55 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Users, Calendar, MapPin, ExternalLink } from 'lucide-react';
+import { ChevronDown, Users, ExternalLink, HelpCircle, Gift, Package } from 'lucide-react';
+import { COLORS, FONTS, UI, GRADIENTS } from './tokens';
+import { FAQS } from './data/faqs';
+import EventCountdown from './components/EventCountdown';
+import ThemeCardGrid from './components/ThemeCardGrid';
+import ScheduleTimeline from './components/ScheduleTimeline';
+import ContactSection from './components/ContactSection';
+import FaqItem from './components/FaqItem';
 
-// NVCC Nighthawks branding from the image
-const COLORS = {
-  darkGreen: '#0B4D2C',
-  green: '#1A6B47',
-  brightGreen: '#2D8659',
-  gold: '#D4AF37',
-  lightGold: '#E8C547',
-  dark: '#0A1F14',
-  darker: '#050F0A',
+const FAQ_ICONS = {
+  1: HelpCircle,
+  2: Users,
+  3: Gift,
+  4: Package,
 };
 
-// Hard-coded FAQs (immutable in the frontend code — change requires editing this file)
-const INITIAL_FAQS = [
-  {
-    id: '1',
-    question: 'What is the reNOVAte Create-a-thon?',
-    answer:
-      "The reNOVAte Create-a-thon is Northern Virginia Community College's premier Create-a-thon and CS club event, bringing together students, innovators, and creators for 10 hours of building, learning, and networking.",
-    order: 1,
-    published: true,
-  },
-  {
-    id: '2',
-    question: 'Who can participate?',
-    answer:
-      "All students are welcome! Whether you're a seasoned coder or have never written a line of code, reNOVAte Create-a-thon is designed for all skill levels, yes even with no coding experience.",
-    order: 2,
-    published: true,
-  },
-  {
-    id: '3',
-    question: 'Is there a registration fee?',
-    answer:
-      'Nope! reNOVAte Create-a-thon is completely free for all participants. We provide food, swag, mentorship, and prizes.',
-    order: 3,
-    published: true,
-  },
-  {
-    id: '4',
-    question: 'What should I bring?',
-    answer:
-      "Bring your laptop, charger, enthusiasm, and any project ideas. We'll handle the rest!",
-    order: 4,
-    published: true,
-  },
-];
+const sectionTitleStyle = {
+  fontSize: 'clamp(2rem, 5vw, 3rem)',
+  marginBottom: '3rem',
+  textAlign: 'center',
+  fontFamily: FONTS.display,
+  fontWeight: 700,
+  background: GRADIENTS.sectionHeading,
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+};
 
 const App = () => {
-  // Scroll animations
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -69,15 +47,15 @@ const App = () => {
   return (
     <div
       style={{
-        fontFamily: '"Space Mono", "Courier New", monospace',
+        fontFamily: FONTS.body,
         background: `linear-gradient(135deg, ${COLORS.darker} 0%, ${COLORS.dark} 50%, ${COLORS.darkGreen} 100%)`,
         minHeight: '100vh',
+        maxWidth: '100%',
         color: '#fff',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Circuit board background effect */}
       <div
         style={{
           position: 'fixed',
@@ -96,7 +74,6 @@ const App = () => {
         }}
       />
 
-      {/* Glowing orbs */}
       <div
         style={{
           position: 'fixed',
@@ -125,7 +102,6 @@ const App = () => {
       />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        {/* Navigation */}
         <nav
           style={{
             padding: '1.5rem 2rem',
@@ -144,23 +120,22 @@ const App = () => {
             style={{
               fontSize: '1.5rem',
               fontWeight: 'bold',
-              background: `linear-gradient(135deg, ${COLORS.lightGold}, ${COLORS.gold})`,
+              fontFamily: FONTS.display,
+              letterSpacing: '2px',
+              background: GRADIENTS.navWordmark,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              letterSpacing: '2px',
+              backgroundClip: 'text',
             }}
           >
             reNOVAte Create-a-thon
           </div>
         </nav>
 
-        {/* Page Content */}
-        <HomePage faqs={INITIAL_FAQS} />
+        <HomePage />
       </div>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Orbitron:wght@400;700;900&display=swap');
-
         * {
           margin: 0;
           padding: 0;
@@ -168,14 +143,19 @@ const App = () => {
         }
 
         .fade-up {
-          opacity: 0;
-          transform: translateY(30px);
+          opacity: 1;
+          transform: translateY(0);
           transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
         .fade-up.animate-in {
           opacity: 1;
           transform: translateY(0);
+        }
+
+        .faq-trigger:focus-visible {
+          outline: 2px solid ${COLORS.gold};
+          outline-offset: 2px;
         }
 
         @keyframes float {
@@ -209,12 +189,12 @@ const App = () => {
   );
 };
 
-const HomePage = ({ faqs }) => {
+const HomePage = () => {
   const [openFaq, setOpenFaq] = useState(null);
+  const faqs = FAQS;
 
   return (
     <>
-      {/* Hero Section */}
       <section
         style={{
           minHeight: '90vh',
@@ -233,11 +213,12 @@ const HomePage = ({ faqs }) => {
             fontSize: 'clamp(2.5rem, 8vw, 5rem)',
             fontWeight: 900,
             marginBottom: '1rem',
-            fontFamily: '"Orbitron", sans-serif',
+            fontFamily: FONTS.display,
             letterSpacing: '4px',
-            background: `linear-gradient(135deg, ${COLORS.lightGold}, ${COLORS.gold}, ${COLORS.brightGreen})`,
+            background: GRADIENTS.heroTitle,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
             textShadow: `0 0 80px ${COLORS.gold}60`,
             animationDelay: '0.1s',
           }}
@@ -252,6 +233,7 @@ const HomePage = ({ faqs }) => {
             marginBottom: '1rem',
             color: COLORS.lightGold,
             maxWidth: '800px',
+            fontFamily: FONTS.display,
             fontWeight: 'bold',
             animationDelay: '0.2s',
           }}
@@ -263,17 +245,17 @@ const HomePage = ({ faqs }) => {
           className="fade-up"
           style={{
             fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
-            marginBottom: '3rem',
+            marginBottom: '2rem',
             color: '#ffffffcc',
             maxWidth: '700px',
             lineHeight: '1.6',
             animationDelay: '0.3s',
           }}
         >
-          Join the Nighthawks on April 18th for 10 hours of coding, building, and innovation at NVCC Manassas campus. Connect with fellow builders, learn from mentors, and bring your wildest tech ideas to life.
+          Join the Nighthawks on April 18th for 10 hours of coding, building, and innovation at NVCC Manassas campus.
+          Connect with fellow builders, learn from mentors, and bring your wildest tech ideas to life.
         </p>
 
-        {/* CTA Buttons */}
         <div
           className="fade-up"
           style={{
@@ -281,7 +263,7 @@ const HomePage = ({ faqs }) => {
             gap: '1.5rem',
             flexWrap: 'wrap',
             justifyContent: 'center',
-            marginBottom: '3rem',
+            marginBottom: '2rem',
             animationDelay: '0.4s',
           }}
         >
@@ -303,7 +285,7 @@ const HomePage = ({ faqs }) => {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
-              fontFamily: 'inherit',
+              fontFamily: FONTS.body,
             }}
           >
             Register!!
@@ -329,7 +311,7 @@ const HomePage = ({ faqs }) => {
               alignItems: 'center',
               gap: '0.5rem',
               transition: 'all 0.3s',
-              fontFamily: 'inherit',
+              fontFamily: FONTS.body,
             }}
           >
             Become a Judge!!
@@ -354,7 +336,7 @@ const HomePage = ({ faqs }) => {
               alignItems: 'center',
               gap: '0.5rem',
               transition: 'all 0.3s',
-              fontFamily: 'inherit',
+              fontFamily: FONTS.body,
             }}
           >
             Sponsor
@@ -362,7 +344,8 @@ const HomePage = ({ faqs }) => {
           </a>
         </div>
 
-        {/* Social Links */}
+        <EventCountdown />
+
         <div
           className="fade-up social-links"
           style={{
@@ -386,7 +369,7 @@ const HomePage = ({ faqs }) => {
               alignItems: 'center',
               gap: '0.5rem',
               transition: 'all 0.3s',
-              fontFamily: 'inherit',
+              fontFamily: FONTS.body,
             }}
           >
             𝕏 (twitter)
@@ -407,10 +390,10 @@ const HomePage = ({ faqs }) => {
               alignItems: 'center',
               gap: '0.5rem',
               transition: 'all 0.3s',
-              fontFamily: 'inherit',
+              fontFamily: FONTS.body,
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
             </svg>
             Instagram
@@ -430,17 +413,16 @@ const HomePage = ({ faqs }) => {
               alignItems: 'center',
               gap: '0.5rem',
               transition: 'all 0.3s',
-              fontFamily: 'inherit',
+              fontFamily: FONTS.body,
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
               <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
             </svg>
             Discord
           </a>
         </div>
 
-        {/* Scroll indicator */}
         <div
           className="fade-up"
           style={{
@@ -453,75 +435,12 @@ const HomePage = ({ faqs }) => {
         </div>
       </section>
 
-      {/* Info Cards */}
-      <section
-        style={{
-          padding: '4rem 2rem',
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}
-      >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '2rem',
-          }}
-        >
-          {[
-            { icon: <Calendar size={40} />, title: 'When?', text: 'April 18\n10 hours of building' },
-            { icon: <MapPin size={40} />, title: 'Where?', text: 'NVCC Manassas Campus' },
-            { icon: <Users size={40} />, title: 'Who?', text: 'All students\nAll skill levels welcome' },
-          ].map((card, idx) => (
-            <div
-              key={idx}
-              className="fade-up hover-lift"
-              style={{
-                padding: '2rem',
-                background: `linear-gradient(135deg, ${COLORS.dark}cc, ${COLORS.darkGreen}cc)`,
-                border: `1px solid ${COLORS.green}60`,
-                borderRadius: '12px',
-                backdropFilter: 'blur(10px)',
-                animationDelay: `${0.7 + idx * 0.1}s`,
-              }}
-            >
-              <div style={{ color: COLORS.gold, marginBottom: '1rem' }}>{card.icon}</div>
-              <h3
-                style={{
-                  fontSize: '1.5rem',
-                  marginBottom: '0.75rem',
-                  color: COLORS.lightGold,
-                  fontFamily: '"Orbitron", sans-serif',
-                }}
-              >
-                {card.title}
-              </h3>
-              <p style={{ color: '#ffffffcc', lineHeight: '1.6', whiteSpace: 'pre-line' }}>{card.text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <ThemeCardGrid />
 
-      {/* FAQ Section */}
-      <section
-        style={{
-          padding: '4rem 2rem',
-          maxWidth: '900px',
-          margin: '0 auto',
-        }}
-      >
-        <h2
-          className="fade-up"
-          style={{
-            fontSize: 'clamp(2rem, 5vw, 3rem)',
-            marginBottom: '3rem',
-            textAlign: 'center',
-            fontFamily: '"Orbitron", sans-serif',
-            background: `linear-gradient(135deg, ${COLORS.lightGold}, ${COLORS.gold})`,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
+      <ScheduleTimeline />
+
+      <section style={{ padding: '4rem 2rem', maxWidth: '900px', margin: '0 auto' }}>
+        <h2 className="fade-up" style={sectionTitleStyle}>
           Frequently Asked Questions
         </h2>
 
@@ -529,12 +448,20 @@ const HomePage = ({ faqs }) => {
           {faqs
             .filter((faq) => faq.published)
             .map((faq, idx) => (
-              <FaqItem key={faq.id} faq={faq} idx={idx} openFaq={openFaq} setOpenFaq={setOpenFaq} />
+              <FaqItem
+                key={faq.id}
+                faq={faq}
+                idx={idx}
+                openFaq={openFaq}
+                setOpenFaq={setOpenFaq}
+                Icon={FAQ_ICONS[Number(faq.id)] || HelpCircle}
+              />
             ))}
         </div>
       </section>
 
-      {/* Footer */}
+      <ContactSection />
+
       <footer
         style={{
           padding: '3rem 2rem',
@@ -543,68 +470,14 @@ const HomePage = ({ faqs }) => {
           marginTop: '4rem',
         }}
       >
-        <p style={{ color: '#ffffff99', marginBottom: '1rem' }}>© 2026 reNOVAte Create-a-thon - Northern Virginia Community College Manassas</p>
-        <p style={{ color: '#ffffff66', fontSize: '0.875rem' }}>Northern Virgina Comunity College Comp Sci Club (Mannasas)</p>
+        <p style={{ color: '#ffffff99', marginBottom: '1rem' }}>
+          © 2026 reNOVAte Create-a-thon — Northern Virginia Community College Manassas
+        </p>
+        <p style={{ color: '#ffffff66', fontSize: '0.875rem' }}>
+          NVCC Computer Science Club — hosted on campus with faculty support.
+        </p>
       </footer>
     </>
-  );
-};
-
-const FaqItem = ({ faq, idx, openFaq, setOpenFaq }) => {
-  return (
-    <div
-      className="fade-up"
-      style={{
-        background: `linear-gradient(135deg, ${COLORS.dark}cc, ${COLORS.darkGreen}cc)`,
-        border: `1px solid ${COLORS.green}60`,
-        borderRadius: '8px',
-        overflow: 'hidden',
-        backdropFilter: 'blur(10px)',
-        animationDelay: `${idx * 0.1}s`,
-      }}
-    >
-      <button
-        onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
-        style={{
-          width: '100%',
-          padding: '1.5rem',
-          background: 'transparent',
-          border: 'none',
-          color: '#fff',
-          fontSize: '1.125rem',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          textAlign: 'left',
-          fontFamily: 'inherit',
-        }}
-      >
-        <span>{faq.question}</span>
-        <ChevronDown
-          size={24}
-          style={{
-            transform: openFaq === faq.id ? 'rotate(180deg)' : 'rotate(0)',
-            transition: 'transform 0.3s',
-            color: COLORS.gold,
-            marginLeft: '1rem',
-          }}
-        />
-      </button>
-
-      <div
-        style={{
-          maxHeight: openFaq === faq.id ? '500px' : '0',
-          overflow: 'hidden',
-          transition: 'max-height 0.3s ease',
-        }}
-      >
-        <div style={{ padding: '0 1.5rem 1.5rem', color: '#ffffffcc', lineHeight: '1.6' }}>
-          <p>{faq.answer}</p>
-        </div>
-      </div>
-    </div>
   );
 };
 
