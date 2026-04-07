@@ -5,10 +5,10 @@ A modern, bit.camp-inspired single-page React application for NVCC HAX hackathon
 ## Features
 
 ✅ **Landing Page**
-- Hero section with NVCC Nighthawks branding
-- Animated circuit board background effects
-- Info cards (When, Where, Who)
-- Social media links (Discord, Instagram)
+- Hero with reNOVAte Create-a-thon branding (Nighthawk Green / light UI)
+- Event countdown (optional `VITE_EVENT_START_ISO` in `.env`)
+- Tracks grid, day-of schedule, FAQ accordion, contact block
+- Social media links (Discord, Instagram, X)
 
 ✅ **Call-to-Action Buttons**
 - "I'm Interested" → Google Form
@@ -27,11 +27,17 @@ A modern, bit.camp-inspired single-page React application for NVCC HAX hackathon
 - Edit, add, delete, publish/unpublish FAQs
 
 ✅ **Design**
-- NVCC Nighthawks green & gold color scheme
-- Space Mono + Orbitron fonts for tech aesthetic
-- Responsive design (mobile, tablet, desktop)
-- Smooth animations and transitions
-- Glowing effects and gradient backgrounds
+- Brand tokens in `src/tokens.js` (classic Nighthawks forest green & gold)
+- Space Mono + Orbitron; dark theme cards, responsive layout
+
+## Landing content (reNOVAte)
+
+| What | Edit |
+|------|------|
+| Event start for countdown | Optional `.env`: `VITE_EVENT_START_ISO=` (ISO 8601, e.g. `2026-04-18T07:30:00-04:00`). Copy from [`.env.example`](.env.example). If unset, a default April 2026 datetime is used. |
+| Tracks | [`src/data/tracks.js`](src/data/tracks.js) |
+| Schedule | [`src/data/schedule.js`](src/data/schedule.js) |
+| FAQs | [`src/data/faqs.js`](src/data/faqs.js) — only entries with `published: true` appear |
 
 ## Quick Start
 
