@@ -63,7 +63,7 @@ export default function ThemeCardGrid() {
           fontFamily: FONTS.body,
         }}
       >
-        Pick a track that fits your skills — every path leads to building something you can show off at judging.
+        Pick a track that fits your skills or somthing you are interested in every path leads to building something you can show off at judging.
       </p>
       <div
         style={{

@@ -64,7 +64,7 @@ export default function ContactSection() {
             <a href="https://x.com/nvccmacsclub" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.brightGreen }}>
               X
             </a>
-            .
+            .<p>Email us at <a href="mailto:nvccmacsclub@gmail.com" style={{ color: COLORS.brightGreen }}>nvccmacsclub@gmail.com</a>.</p>
           </p>
         </div>
         <div>

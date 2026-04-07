@@ -7,6 +7,7 @@ import ThemeCardGrid from './components/ThemeCardGrid';
 import ScheduleTimeline from './components/ScheduleTimeline';
 import ContactSection from './components/ContactSection';
 import FaqItem from './components/FaqItem';
+import MagneticRegisterButton from './components/MagneticRegisterButton';
 
 const FAQ_ICONS = {
   1: HelpCircle,
@@ -53,7 +54,6 @@ const App = () => {
         maxWidth: '100%',
         color: '#fff',
         position: 'relative',
-        overflow: 'hidden',
       }}
     >
       <div
@@ -172,6 +172,10 @@ const App = () => {
           box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
         }
 
+        .magnetic-register-btn:hover {
+          box-shadow: 0 12px 36px rgba(212, 175, 55, 0.45);
+        }
+
         @media (max-width: 640px) {
           .social-links {
             flex-direction: column;
@@ -267,11 +271,10 @@ const HomePage = () => {
             animationDelay: '0.4s',
           }}
         >
-          <a
+          <MagneticRegisterButton
             href="https://docs.google.com/forms/d/e/1FAIpQLSecG3E17tstmPmlDcuvlDYXIXiX9AcnPLumBTgDudaOWLIahw/viewform?usp=header"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover-lift"
             style={{
               padding: '1.25rem 2.5rem',
               background: `linear-gradient(135deg, ${COLORS.gold}, ${COLORS.lightGold})`,
@@ -285,12 +288,11 @@ const HomePage = () => {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
-              fontFamily: FONTS.body,
             }}
           >
             Register!!
             <ExternalLink size={20} />
-          </a>
+          </MagneticRegisterButton>
 
           <a
             href="https://docs.google.com/forms/d/e/1FAIpQLSeI9y2X2WKxh8BUfwh3aDYz8705md-EfHJeq1iNJ0Y-43OJzA/viewform?usp=publish-editor"
