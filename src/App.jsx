@@ -295,7 +295,7 @@ const HomePage = () => {
           </MagneticRegisterButton>
 
           <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSeI9y2X2WKxh8BUfwh3aDYz8705md-EfHJeq1iNJ0Y-43OJzA/viewform?usp=publish-editor"
+            href="https://forms.gle/jnGxW6wY2i82F3n58"
             target="_blank"
             rel="noopener noreferrer"
             className="hover-lift"
@@ -320,7 +320,7 @@ const HomePage = () => {
             <Users size={20} />
           </a>
           <a
-            href="https://forms.gle/jnGxW6wY2i82F3n58"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSf62TrVyY-8sINGdBUCish25_y08o-EPTk3zcWG7sMHeo1HZA/viewform"
             target="_blank"
             rel="noopener noreferrer"
             className="hover-lift"
