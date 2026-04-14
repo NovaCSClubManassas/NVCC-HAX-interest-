@@ -61,9 +61,12 @@ function useMaxWidth(maxPx) {
   return matches;
 }
 
-function OrganizerSlide({ person }) {
+function OrganizerSlide({ person, variant, onSeeMore }) {
+  const isPreview = variant === 'preview';
   return (
     <div
+      role="group"
+      aria-label={`${person.name}, ${person.role}`}
       style={{
         background: UI.cardGlass,
         border: `1px solid ${COLORS.green}40`,
@@ -76,7 +79,15 @@ function OrganizerSlide({ person }) {
         minHeight: 0,
         height: '100%',
         boxSizing: 'border-box',
+        cursor: onSeeMore ? 'pointer' : undefined,
       }}
+      onClick={
+        onSeeMore
+          ? () => {
+              onSeeMore(person.id);
+            }
+          : undefined
+      }
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div
@@ -114,35 +125,60 @@ function OrganizerSlide({ person }) {
             {person.name}
           </h3>
           <p
+            className="organizers-role"
             style={{
               fontFamily: FONTS.body,
               fontSize: '0.85rem',
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               color: COLORS.brightGreen,
-              marginBottom: '0.75rem',
+              marginBottom: isPreview ? 0 : '0.75rem',
             }}
           >
             {person.role}
           </p>
-          <p
-            style={{
-              fontFamily: FONTS.body,
-              color: UI.textMuted,
-              lineHeight: 1.65,
-              fontSize: '0.95rem',
-            }}
-          >
-            {person.tagline}
-          </p>
+          {!isPreview ? (
+            <p
+              className="organizers-tagline"
+              style={{
+                fontFamily: FONTS.body,
+                color: UI.textMuted,
+                lineHeight: 1.65,
+                fontSize: '0.95rem',
+              }}
+            >
+              {person.tagline}
+            </p>
+          ) : null}
         </div>
       </div>
-      {person.linkedinUrl ? (
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSeeMore?.(person.id);
+          }}
+          style={{
+            padding: '0.5rem 0.9rem',
+            borderRadius: '8px',
+            border: `1px solid ${COLORS.gold}55`,
+            background: `${COLORS.darker}aa`,
+            color: COLORS.gold,
+            fontFamily: FONTS.body,
+            fontSize: '0.875rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          See more
+        </button>
+        {!isPreview && person.linkedinUrl ? (
           <a
             href={person.linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -161,8 +197,8 @@ function OrganizerSlide({ person }) {
             <Linkedin size={18} aria-hidden />
             LinkedIn
           </a>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -311,7 +347,7 @@ function OrganizerSlideFocusWrapper({ layoutThreeUp, isCenter, prefersReducedMot
   );
 }
 
-const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack({ prefersReducedMotion }, ref) {
+const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack({ prefersReducedMotion, onSeeMore }, ref) {
   const narrow = useMaxWidth(NARROW_MAX_PX);
   const layoutThreeUp = !narrow;
 
@@ -450,6 +486,7 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack({ pr
         {slides.map(({ person, key }, slideIndex) => {
           const rel = slideIndex - trackIndex;
           const isCenter = layoutThreeUp && rel === 0;
+          const variant = layoutThreeUp ? (isCenter ? 'center' : 'preview') : 'center';
 
           return (
             <div
@@ -467,7 +504,7 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack({ pr
                 isCenter={isCenter}
                 prefersReducedMotion={prefersReducedMotion}
               >
-                <OrganizerSlide person={person} />
+                <OrganizerSlide person={person} variant={variant} onSeeMore={onSeeMore} />
               </OrganizerSlideFocusWrapper>
             </div>
           );
@@ -481,6 +518,7 @@ export default function OrganizersSection() {
   const prefersReducedMotion = usePrefersReducedMotion();
   const carouselRef = useRef(null);
   const sectionRef = useRef(null);
+  const lastFocusRef = useRef(null);
 
   const goPrev = useCallback(() => {
     carouselRef.current?.goPrev();
@@ -490,7 +528,30 @@ export default function OrganizersSection() {
     carouselRef.current?.goNext();
   }, []);
 
-  const autoplayPaused = prefersReducedMotion;
+  const [autoplayUserPaused, setAutoplayUserPaused] = useState(false);
+  const [modalPersonId, setModalPersonId] = useState(null);
+  const isModalOpen = modalPersonId != null;
+
+  const openModal = useCallback((personId) => {
+    setAutoplayUserPaused(true);
+    lastFocusRef.current = document.activeElement;
+    setModalPersonId(personId);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setModalPersonId(null);
+    const el = lastFocusRef.current;
+    if (el && typeof el.focus === 'function') {
+      // Restore focus after close (best-effort).
+      setTimeout(() => el.focus(), 0);
+    }
+  }, []);
+
+  const onAnyInteract = useCallback(() => {
+    setAutoplayUserPaused(true);
+  }, []);
+
+  const autoplayPaused = prefersReducedMotion || autoplayUserPaused || isModalOpen;
 
   useEffect(() => {
     if (autoplayPaused) return undefined;
@@ -507,15 +568,31 @@ export default function OrganizersSection() {
       if (!root.contains(document.activeElement)) return;
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
+        onAnyInteract();
         goPrev();
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
+        onAnyInteract();
         goNext();
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [goPrev, goNext]);
+  }, [goPrev, goNext, onAnyInteract]);
+
+  useEffect(() => {
+    if (!isModalOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeModal();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isModalOpen, closeModal]);
+
+  const modalPerson = useMemo(() => (modalPersonId ? ORGANIZERS.find((o) => o.id === modalPersonId) : null), [modalPersonId]);
 
   return (
     <section
@@ -547,15 +624,155 @@ export default function OrganizersSection() {
       </p>
 
       <style>{`
+        .organizers-role {
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          min-height: 1.35em;
+        }
+
+        .organizers-tagline {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          min-height: calc(2 * 1.65em);
+        }
+
         .organizers-nav-btn:focus-visible {
           outline: 2px solid ${COLORS.gold};
           outline-offset: 3px;
         }
+
+        .organizers-modal-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.62);
+          backdrop-filter: blur(6px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1.25rem;
+          z-index: 999;
+        }
+
+        .organizers-modal {
+          width: min(860px, 100%);
+          max-height: min(86vh, 920px);
+          overflow: auto;
+          background: ${UI.cardGlass};
+          border: 1px solid ${COLORS.green}55;
+          border-radius: 16px;
+          box-shadow: 0 28px 90px rgba(0,0,0,0.55);
+        }
       `}</style>
 
-      <CarouselShell onPrev={goPrev} onNext={goNext}>
-        <OrganizersCarouselTrack ref={carouselRef} prefersReducedMotion={prefersReducedMotion} />
+      <CarouselShell
+        onPrev={() => {
+          onAnyInteract();
+          goPrev();
+        }}
+        onNext={() => {
+          onAnyInteract();
+          goNext();
+        }}
+      >
+        <OrganizersCarouselTrack
+          ref={carouselRef}
+          prefersReducedMotion={prefersReducedMotion}
+          onSeeMore={(id) => {
+            onAnyInteract();
+            openModal(id);
+          }}
+        />
       </CarouselShell>
+
+      {isModalOpen && modalPerson ? (
+        <div
+          className="organizers-modal-backdrop"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) closeModal();
+          }}
+          role="presentation"
+        >
+          <div
+            className="organizers-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="organizers-modal-title"
+            style={{ padding: '1.25rem' }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+              <div>
+                <h3
+                  id="organizers-modal-title"
+                  style={{ fontFamily: FONTS.display, fontSize: '1.6rem', color: COLORS.lightGold, marginBottom: '0.25rem' }}
+                >
+                  {modalPerson.name}
+                </h3>
+                <p style={{ fontFamily: FONTS.body, color: COLORS.brightGreen, letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: '0.85rem' }}>
+                  {modalPerson.role}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeModal}
+                className="organizers-nav-btn"
+                style={navBtnStyle}
+                ref={(el) => {
+                  if (el) el.focus();
+                }}
+                aria-label="Close dialog"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, 0.9fr) minmax(260px, 1.1fr)', gap: '1.25rem', marginTop: '1.25rem' }}>
+              <div
+                style={{
+                  borderRadius: '14px',
+                  overflow: 'hidden',
+                  border: `1px solid ${COLORS.gold}44`,
+                  background: COLORS.darker,
+                  aspectRatio: '4 / 3',
+                }}
+              >
+                <img src={modalPerson.photoSrc} alt={`${modalPerson.name} photo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <p style={{ fontFamily: FONTS.body, color: UI.textMuted, lineHeight: 1.75, fontSize: '1rem', marginBottom: '1rem' }}>
+                  {modalPerson.tagline}
+                </p>
+                {modalPerson.linkedinUrl ? (
+                  <a
+                    href={modalPerson.linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.55rem',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '10px',
+                      background: `${COLORS.darkGreen}cc`,
+                      border: `1px solid ${COLORS.gold}55`,
+                      color: COLORS.gold,
+                      textDecoration: 'none',
+                      fontFamily: FONTS.body,
+                      fontWeight: 700,
+                    }}
+                  >
+                    <Linkedin size={20} aria-hidden />
+                    LinkedIn
+                  </a>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
