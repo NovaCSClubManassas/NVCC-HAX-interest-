@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react';
-import { Linkedin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Linkedin } from 'lucide-react';
 import { COLORS, FONTS, GRADIENTS, UI } from '../tokens';
 import { ORGANIZERS } from '../data/organizers';
 
@@ -203,51 +203,19 @@ function OrganizerSlide({ person, variant, onSeeMore }) {
   );
 }
 
-const navBtnStyle = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '44px',
-  height: '44px',
-  borderRadius: '10px',
-  border: `1px solid ${COLORS.gold}55`,
-  background: `${COLORS.darker}dd`,
-  color: COLORS.gold,
-  cursor: 'pointer',
-  zIndex: 5,
-};
-
-function CarouselShell({ children, onPrev, onNext }) {
+function CarouselShell({ children }) {
   return (
     <div
       className="organizers-carousel-shell fade-up"
       style={{
         position: 'relative',
-        paddingLeft: 'clamp(40px, 5vw, 52px)',
-        paddingRight: 'clamp(40px, 5vw, 52px)',
+        paddingLeft: 0,
+        paddingRight: 0,
         maxWidth: '1120px',
         margin: '0 auto',
       }}
     >
-      <button
-        type="button"
-        className="organizers-nav-btn organizers-nav-prev"
-        onClick={onPrev}
-        aria-label="Previous organizer"
-        style={{ ...navBtnStyle, position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)' }}
-      >
-        <ChevronLeft size={24} aria-hidden />
-      </button>
       {children}
-      <button
-        type="button"
-        className="organizers-nav-btn organizers-nav-next"
-        onClick={onNext}
-        aria-label="Next organizer"
-        style={{ ...navBtnStyle, position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
-      >
-        <ChevronRight size={24} aria-hidden />
-      </button>
     </div>
   );
 }
@@ -347,7 +315,10 @@ function OrganizerSlideFocusWrapper({ layoutThreeUp, isCenter, prefersReducedMot
   );
 }
 
-const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack({ prefersReducedMotion, onSeeMore }, ref) {
+const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack(
+  { prefersReducedMotion, onSeeMore, onInteract },
+  ref
+) {
   const narrow = useMaxWidth(NARROW_MAX_PX);
   const layoutThreeUp = !narrow;
 
@@ -363,6 +334,12 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack({ pr
   const trackIndexRef = useRef(firstRealIndex);
   const [trackIndex, setTrackIndex] = useState(firstRealIndex);
   const [transitionEnabled, setTransitionEnabled] = useState(true);
+  const [dragOffsetPx, setDragOffsetPx] = useState(0);
+
+  const isPointerDownRef = useRef(false);
+  const startXRef = useRef(0);
+  const lastXRef = useRef(0);
+  const suppressClickRef = useRef(false);
 
   useEffect(() => {
     trackIndexRef.current = trackIndex;
@@ -457,6 +434,67 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack({ pr
   const transition =
     prefersReducedMotion || !transitionEnabled ? 'none' : CAROUSEL_TRANSITION;
 
+  const getClientX = (e) => {
+    if (typeof e.clientX === 'number') return e.clientX;
+    const t = e.touches && e.touches[0];
+    return t ? t.clientX : 0;
+  };
+
+  const onPointerDown = useCallback(
+    (e) => {
+      if (e.button != null && e.button !== 0) return;
+      if (prefersReducedMotion) return;
+      onInteract?.();
+      suppressClickRef.current = false;
+      isPointerDownRef.current = true;
+      const x = getClientX(e);
+      startXRef.current = x;
+      lastXRef.current = x;
+      setTransitionEnabled(false);
+      try {
+        e.currentTarget.setPointerCapture?.(e.pointerId);
+      } catch {
+        // ignore
+      }
+    },
+    [prefersReducedMotion, onInteract]
+  );
+
+  const onPointerMove = useCallback((e) => {
+    if (!isPointerDownRef.current) return;
+    const x = getClientX(e);
+    lastXRef.current = x;
+    const dx = x - startXRef.current;
+    if (Math.abs(dx) > 8) suppressClickRef.current = true;
+    setDragOffsetPx(dx);
+  }, []);
+
+  const endDrag = useCallback(
+    (e) => {
+      if (!isPointerDownRef.current) return;
+      isPointerDownRef.current = false;
+      const dx = lastXRef.current - startXRef.current;
+      setDragOffsetPx(0);
+      const THRESHOLD_PX = 60;
+      const shouldMove = Math.abs(dx) >= THRESHOLD_PX;
+      if (!shouldMove) {
+        setTransitionEnabled(true);
+        return;
+      }
+      // Re-enable transition before advancing so it animates.
+      setTransitionEnabled(true);
+      requestAnimationFrame(() => {
+        if (dx < 0) goNext();
+        else goPrev();
+      });
+      if (suppressClickRef.current) {
+        e.preventDefault?.();
+        e.stopPropagation?.();
+      }
+    },
+    [goNext, goPrev]
+  );
+
   return (
     <div
       style={{
@@ -468,9 +506,22 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack({ pr
         paddingTop: layoutThreeUp ? 'clamp(0.75rem, 2vw, 1.25rem)' : 0,
         paddingBottom: layoutThreeUp ? 'clamp(0.75rem, 2vw, 1.25rem)' : 0,
         boxSizing: 'border-box',
+        touchAction: 'pan-y',
+        cursor: prefersReducedMotion ? 'default' : isPointerDownRef.current ? 'grabbing' : 'grab',
       }}
       aria-roledescription="carousel"
       aria-live="polite"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onClickCapture={(e) => {
+        if (suppressClickRef.current) {
+          suppressClickRef.current = false;
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }}
     >
       <div
         ref={trackRef}
@@ -479,7 +530,7 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack({ pr
           display: 'flex',
           alignItems: 'center',
           width: `${trackWidthPercent}%`,
-          transform: applyTransform(trackIndex),
+          transform: `${applyTransform(trackIndex)} translateX(${dragOffsetPx}px)`,
           transition,
         }}
       >
@@ -521,10 +572,12 @@ export default function OrganizersSection() {
   const lastFocusRef = useRef(null);
 
   const goPrev = useCallback(() => {
+    setAutoplayUserPaused(true);
     carouselRef.current?.goPrev();
   }, []);
 
   const goNext = useCallback(() => {
+    setAutoplayUserPaused(true);
     carouselRef.current?.goNext();
   }, []);
 
@@ -668,21 +721,13 @@ export default function OrganizersSection() {
         }
       `}</style>
 
-      <CarouselShell
-        onPrev={() => {
-          onAnyInteract();
-          goPrev();
-        }}
-        onNext={() => {
-          onAnyInteract();
-          goNext();
-        }}
-      >
+      <CarouselShell>
         <OrganizersCarouselTrack
           ref={carouselRef}
           prefersReducedMotion={prefersReducedMotion}
+          onInteract={() => setAutoplayUserPaused(true)}
           onSeeMore={(id) => {
-            onAnyInteract();
+            setAutoplayUserPaused(true);
             openModal(id);
           }}
         />
