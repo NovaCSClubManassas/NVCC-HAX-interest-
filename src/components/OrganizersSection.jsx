@@ -14,6 +14,9 @@ const NARROW_MAX_PX = 640;
 
 const CENTER_LIFT_PX = 10;
 
+/** Horizontal movement before carousel takes pointer capture (keeps native click on card/photo). */
+const POINTER_DRAG_COMMIT_PX = 8;
+
 const sectionTitleStyle = {
   fontSize: 'clamp(2rem, 5vw, 3rem)',
   marginBottom: '1.25rem',
@@ -24,6 +27,23 @@ const sectionTitleStyle = {
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   backgroundClip: 'text',
+};
+
+const navBtnStyle = {
+  flexShrink: 0,
+  width: '2.5rem',
+  height: '2.5rem',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '8px',
+  border: `1px solid ${COLORS.gold}55`,
+  background: `${COLORS.darker}aa`,
+  color: COLORS.gold,
+  fontSize: '1.25rem',
+  lineHeight: 1,
+  cursor: 'pointer',
+  fontFamily: FONTS.body,
 };
 
 function usePrefersReducedMotion() {
@@ -104,6 +124,7 @@ function OrganizerSlide({ person, variant, onSeeMore }) {
             src={person.photoSrc}
             alt={`${person.name} photo`}
             loading="lazy"
+            draggable={false}
             style={{
               width: '100%',
               height: '100%',
@@ -331,6 +352,7 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack(
   const trackWidthPercent = layoutThreeUp ? (totalSlides / 3) * 100 : totalSlides * 100;
 
   const trackRef = useRef(null);
+  const viewportRef = useRef(null);
   const trackIndexRef = useRef(firstRealIndex);
   const [trackIndex, setTrackIndex] = useState(firstRealIndex);
   const [transitionEnabled, setTransitionEnabled] = useState(true);
@@ -340,6 +362,10 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack(
   const startXRef = useRef(0);
   const lastXRef = useRef(0);
   const suppressClickRef = useRef(false);
+  const activePointerIdRef = useRef(-1);
+  const hasCaptureRef = useRef(false);
+  const windowPointerEndCleanupRef = useRef(null);
+  const endDragRef = useRef(() => {});
 
   useEffect(() => {
     trackIndexRef.current = trackIndex;
@@ -440,40 +466,87 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack(
     return t ? t.clientX : 0;
   };
 
+  /** Pointer capture on the viewport breaks native click on nested buttons/links — skip drag when those are the target. */
+  const isInteractivePointerTarget = (target) => {
+    if (!(target instanceof Element)) return false;
+    return Boolean(
+      target.closest(
+        'button, a[href], input, textarea, select, label, [role="button"], [contenteditable="true"]'
+      )
+    );
+  };
+
   const onPointerDown = useCallback(
     (e) => {
       if (e.button != null && e.button !== 0) return;
       if (prefersReducedMotion) return;
+      if (isInteractivePointerTarget(e.target)) return;
       onInteract?.();
       suppressClickRef.current = false;
+      hasCaptureRef.current = false;
       isPointerDownRef.current = true;
+      activePointerIdRef.current = e.pointerId;
       const x = getClientX(e);
       startXRef.current = x;
       lastXRef.current = x;
       setTransitionEnabled(false);
-      try {
-        e.currentTarget.setPointerCapture?.(e.pointerId);
-      } catch {
-        // ignore
-      }
+
+      const onWindowPointerEnd = (winEv) => {
+        if (winEv.pointerId !== activePointerIdRef.current) return;
+        endDragRef.current(winEv);
+      };
+      windowPointerEndCleanupRef.current = () => {
+        window.removeEventListener('pointerup', onWindowPointerEnd, true);
+        window.removeEventListener('pointercancel', onWindowPointerEnd, true);
+        windowPointerEndCleanupRef.current = null;
+      };
+      window.addEventListener('pointerup', onWindowPointerEnd, true);
+      window.addEventListener('pointercancel', onWindowPointerEnd, true);
     },
     [prefersReducedMotion, onInteract]
   );
 
   const onPointerMove = useCallback((e) => {
     if (!isPointerDownRef.current) return;
+    if (e.pointerId !== activePointerIdRef.current) return;
     const x = getClientX(e);
     lastXRef.current = x;
     const dx = x - startXRef.current;
-    if (Math.abs(dx) > 8) suppressClickRef.current = true;
+    if (Math.abs(dx) >= POINTER_DRAG_COMMIT_PX) suppressClickRef.current = true;
+    if (!hasCaptureRef.current && Math.abs(dx) >= POINTER_DRAG_COMMIT_PX) {
+      hasCaptureRef.current = true;
+      try {
+        viewportRef.current?.setPointerCapture?.(e.pointerId);
+      } catch {
+        hasCaptureRef.current = false;
+      }
+    }
     setDragOffsetPx(dx);
   }, []);
 
   const endDrag = useCallback(
     (e) => {
+      if (e.pointerId !== activePointerIdRef.current) return;
       if (!isPointerDownRef.current) return;
-      isPointerDownRef.current = false;
+
       const dx = lastXRef.current - startXRef.current;
+
+      windowPointerEndCleanupRef.current?.();
+      windowPointerEndCleanupRef.current = null;
+
+      isPointerDownRef.current = false;
+
+      if (hasCaptureRef.current) {
+        hasCaptureRef.current = false;
+        try {
+          viewportRef.current?.releasePointerCapture?.(e.pointerId);
+        } catch {
+          // ignore
+        }
+      }
+
+      activePointerIdRef.current = -1;
+
       setDragOffsetPx(0);
       const THRESHOLD_PX = 60;
       const shouldMove = Math.abs(dx) >= THRESHOLD_PX;
@@ -495,8 +568,33 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack(
     [goNext, goPrev]
   );
 
+  useEffect(() => {
+    endDragRef.current = endDrag;
+  }, [endDrag]);
+
+  useEffect(
+    () => () => {
+      windowPointerEndCleanupRef.current?.();
+    },
+    []
+  );
+
+  const onLostPointerCapture = useCallback((e) => {
+    if (!isPointerDownRef.current) return;
+    if (e.pointerId !== activePointerIdRef.current) return;
+    hasCaptureRef.current = false;
+    windowPointerEndCleanupRef.current?.();
+    windowPointerEndCleanupRef.current = null;
+    isPointerDownRef.current = false;
+    activePointerIdRef.current = -1;
+    setDragOffsetPx(0);
+    setTransitionEnabled(true);
+  }, []);
+
   return (
     <div
+      ref={viewportRef}
+      className="organizers-carousel-viewport"
       style={{
         overflow: 'hidden',
         width: '100%',
@@ -515,6 +613,7 @@ const OrganizersCarouselTrack = forwardRef(function OrganizersCarouselTrack(
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
+      onLostPointerCapture={onLostPointerCapture}
       onClickCapture={(e) => {
         if (suppressClickRef.current) {
           suppressClickRef.current = false;
@@ -698,6 +797,22 @@ export default function OrganizersSection() {
           outline-offset: 3px;
         }
 
+        .organizers-carousel-viewport {
+          user-select: none;
+          -webkit-user-drag: none;
+        }
+
+        .organizers-carousel-viewport img {
+          -webkit-user-drag: none;
+          user-drag: none;
+        }
+
+        .organizers-modal img {
+          -webkit-user-drag: none;
+          user-drag: none;
+          user-select: none;
+        }
+
         .organizers-modal-backdrop {
           position: fixed;
           inset: 0;
@@ -784,7 +899,12 @@ export default function OrganizersSection() {
                   aspectRatio: '4 / 3',
                 }}
               >
-                <img src={modalPerson.photoSrc} alt={`${modalPerson.name} photo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <img
+                  src={modalPerson.photoSrc}
+                  alt={`${modalPerson.name} photo`}
+                  draggable={false}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
               </div>
               <div style={{ minWidth: 0 }}>
                 <p style={{ fontFamily: FONTS.body, color: UI.textMuted, lineHeight: 1.75, fontSize: '1rem', marginBottom: '1rem' }}>

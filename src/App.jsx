@@ -470,8 +470,7 @@ const HomePage = () => {
         <div
           className="fade-up"
           style={{
-            display: 'flex',
-            justifyContent: 'center',
+            textAlign: 'center',
             padding: '2rem',
             background: 'linear-gradient(135deg, rgba(255,255,255,0.92), rgba(245,245,245,0.88))',
             border: `1px solid ${COLORS.green}40`,
@@ -479,16 +478,28 @@ const HomePage = () => {
             backdropFilter: 'blur(10px)',
           }}
         >
-          <img
-            src="/sponsors/dominion-energy.png"
-            alt="Dominion Energy, Powering Your Every Day"
-            loading="lazy"
+          <a
+            href="https://www.dominionenergy.com/"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
-              maxWidth: 'min(480px, 100%)',
-              height: 'auto',
-              objectFit: 'contain',
+              display: 'inline-block',
+              lineHeight: 0,
+              textDecoration: 'none',
+              maxWidth: '100%',
             }}
-          />
+          >
+            <img
+              src="/sponsors/dominion-energy.png"
+              alt="Dominion Energy, Powering Your Every Day"
+              loading="lazy"
+              style={{
+                maxWidth: 'min(480px, 100%)',
+                height: 'auto',
+                objectFit: 'contain',
+              }}
+            />
+          </a>
         </div>
       </section>
 
