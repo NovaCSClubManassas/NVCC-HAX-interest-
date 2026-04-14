@@ -481,10 +481,10 @@ const HomePage = () => {
         >
           <img
             src="/sponsors/dominion-energy.png"
-            alt="Dominion Energy"
+            alt="Dominion Energy, Powering Your Every Day"
             loading="lazy"
             style={{
-              maxWidth: 'min(360px, 100%)',
+              maxWidth: 'min(480px, 100%)',
               height: 'auto',
               objectFit: 'contain',
             }}
