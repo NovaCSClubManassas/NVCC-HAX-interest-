@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Users, ExternalLink, HelpCircle, Gift, Package } from 'lucide-react';
+import { ChevronDown, Users, ExternalLink, HelpCircle, Gift, Package, UserPlus } from 'lucide-react';
 import { COLORS, FONTS, UI, GRADIENTS } from './tokens';
 import { FAQS } from './data/faqs';
 import EventCountdown from './components/EventCountdown';
 import ThemeCardGrid from './components/ThemeCardGrid';
 import ScheduleTimeline from './components/ScheduleTimeline';
+import OrganizersSection from './components/OrganizersSection';
+import HackerGuideSection from './components/HackerGuideSection';
 import ContactSection from './components/ContactSection';
 import FaqItem from './components/FaqItem';
 import MagneticRegisterButton from './components/MagneticRegisterButton';
@@ -14,6 +16,7 @@ const FAQ_ICONS = {
   2: Users,
   3: Gift,
   4: Package,
+  5: UserPlus,
 };
 
 const sectionTitleStyle = {
@@ -440,6 +443,68 @@ const HomePage = () => {
       <ThemeCardGrid />
 
       <ScheduleTimeline />
+
+      <HackerGuideSection />
+
+      <OrganizersSection />
+
+      <section
+        style={{
+          padding: '4rem 2rem',
+          maxWidth: '960px',
+          margin: '0 auto',
+        }}
+      >
+        <h2 className="fade-up" style={sectionTitleStyle}>
+          Thank you to our sponsor
+        </h2>
+        <p
+          className="fade-up"
+          style={{
+            textAlign: 'center',
+            color: UI.textMuted,
+            marginBottom: '2rem',
+            fontFamily: FONTS.body,
+            lineHeight: 1.6,
+          }}
+        >
+          We’re grateful for our sponsors support for helping this event and our students.
+        </p>
+        <div
+          className="fade-up"
+          style={{
+            textAlign: 'center',
+            padding: '2rem',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.92), rgba(245,245,245,0.88))',
+            border: `1px solid ${COLORS.green}40`,
+            borderRadius: '12px',
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          <a
+            href="https://www.dominionenergy.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-block',
+              lineHeight: 0,
+              textDecoration: 'none',
+              maxWidth: '100%',
+            }}
+          >
+            <img
+              src="/sponsors/dominion-energy.png"
+              alt="Dominion Energy, Powering Your Every Day"
+              loading="lazy"
+              style={{
+                maxWidth: 'min(480px, 100%)',
+                height: 'auto',
+                objectFit: 'contain',
+              }}
+            />
+          </a>
+        </div>
+      </section>
 
       <section style={{ padding: '4rem 2rem', maxWidth: '900px', margin: '0 auto' }}>
         <h2 className="fade-up" style={sectionTitleStyle}>

@@ -32,4 +32,11 @@ export const FAQS = [
     order: 4,
     published: true,
   },
+  {
+    id: '5',
+    question: 'How will teams be formed?',
+    answer: 'Teams will be formed at the workshops.',
+    order: 5,
+    published: true,
+  },
 ];
