@@ -25,7 +25,7 @@ export const ORGANIZERS = [
     name: 'Ihsan Ali',
     role: 'Organizer, Marketing, Relationship Management, and Communications Lead',
     tagline: '"Nova man comp sci president. \nMajoring comp sci"',
-    photoSrc: '/team/placeholder.svg',
+    photoSrc: '/team/ihsan-ali.png',
     linkedinUrl: 'https://www.linkedin.com/school/northern-virginia-community-college/',
   },
   {
