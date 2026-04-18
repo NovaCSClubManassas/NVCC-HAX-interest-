@@ -6,6 +6,7 @@ import EventCountdown from './components/EventCountdown';
 import ThemeCardGrid from './components/ThemeCardGrid';
 import ScheduleTimeline from './components/ScheduleTimeline';
 import OrganizersSection from './components/OrganizersSection';
+import HackerGuideSection from './components/HackerGuideSection';
 import ContactSection from './components/ContactSection';
 import FaqItem from './components/FaqItem';
 import MagneticRegisterButton from './components/MagneticRegisterButton';
@@ -442,6 +443,8 @@ const HomePage = () => {
       <ThemeCardGrid />
 
       <ScheduleTimeline />
+
+      <HackerGuideSection />
 
       <OrganizersSection />
 
